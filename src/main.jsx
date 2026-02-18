@@ -7,7 +7,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <HashRouter>
+    <HashRouter >
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/main" element={<VideojuegosPage />} />
