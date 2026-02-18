@@ -26,31 +26,23 @@ function VideojuegosPage() {
 
     const navigate = useNavigate();
 
-    // Queremos que la lista pueda cambiar según el filtro seleccionado, por eso creamos la función filtrar
-    // function filtrar(categoria) {
-    //     if (categoria == "-1") {
-    //         setListaVideojuegos(lista)
-    //     } else {
-    //         const listaVideojuegosModificado = lista.filter(function (vj) {
-    //             // la función filter se aplica a cada uno de los elementos de la lista, si el es verdadero el elemento queda en la nueva lista, si es falso se elimina
-    //             return vj.categoria == categoria
-    //             // si su categoria es igual a la seleccionada, lo dejo pasar, si no lo es sale de la nueva lista
-    //         })
-    //         setListaVideojuegos(listaVideojuegosModificado)
-    //     }
-    // }
+    function logout() {
+        localStorage.clear()
+        navigate("/")
+    }
 
-    // Este filtrado en el front ya no sirve, pero este es solo de frontend, realmente si existe pero... si hacen consultas más grandes se necesita de filtrado en el backend
-
-    // yo le envió al bankend y este me lo devuelve mediante un query parameter, mediante url
     async function filtrar(categoria) {
-        const URL = "https://script.google.com/macros/s/AKfycbwN_f3ANnjp4W4-MTf-2gmHT3KZZeNPXiQsaeyWEmOlcAzms8TaGk65eyU-z4Neuz_ISg/exec"
+        const URL = "http://127.0.0.1:8000/videojuegos"
         //const response = await fetch(URL + "?categoria=" + categoria)
         // hay una forma mejor de hacer esto: interpolación de strings con las comillas invertidas ``
         // como hacer comillas invertidas: alt + 96
         let response
         if (categoria == "-1") {
-            response = await fetch(URL)
+            response = await fetch(URL,{
+                headers : {
+                    "x-token" : localStorage.getItem("TOKEN")
+                }
+            })
         } else {
             response = await fetch(`${URL}?categoria=${categoria}`)
         }
@@ -60,31 +52,16 @@ function VideojuegosPage() {
             return
         }
         const data = await response.json()
-        setListaVideojuegos(data)
-    }
-
-
-    function logout() {
-        localStorage.clear()
-        navigate("/")
-    }
-
-    async function obtenerCategoriasHTTP() {
-        const URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiqUhhn7PlOjq7eGUVydyjNJDRhQogqsVTM5CbQMu2Q3NRVBzQT9bfkY1XLdHbeFp-hxAm-D2fU1wQttcf4BPuzVbV66l79on8Vj7eqS9hOTGiw7LTBZGIKVgwpseUehYq5AUDzLnxlixhXzeb1qwE5V3dQMxRB00rbpBTBxjfItfS7wsQEuRgS0jrDlhgUeQYjVJqYpy1uvexJ03iQxoqpoeJgLy8ivD1ZI2f2Q-ves6GQlwmwcKHxezyfWMwM8pqZBlgOwxN1mtgIjuJt3FrD2Q_dxbARGlKymNpB_mD8T_Fm-3JfZ85uOi6e8g&lib=MwotjRmUun0RLlzJNoicmGhJptMVnD4LO"
-        const response = await fetch(URL)
-
-        if (!response.ok) {
-            console.error("Error de pletición. " + response.status)
-            return
-        }
-
-        const data = await response.json()
-        setCategorias(data)
+        setListaVideojuegos(data.data)
     }
 
     async function obtenerVideoJuegosHTTP() {
-        const URL = "https://script.google.com/macros/s/AKfycbwN_f3ANnjp4W4-MTf-2gmHT3KZZeNPXiQsaeyWEmOlcAzms8TaGk65eyU-z4Neuz_ISg/exec"
-        const response = await fetch(URL)
+        const URL = "http://127.0.0.1:8000/videojuegos"
+        const response = await fetch(URL,{
+            headers : {
+                "x-token" : localStorage.getItem("TOKEN")
+            }
+        })
 
         if (!response.ok) {
             console.error("Error de pletición. " + response.status)
@@ -92,7 +69,24 @@ function VideojuegosPage() {
         }
 
         const data = await response.json()
-        setListaVideojuegos(data)
+        setListaVideojuegos(data.data)
+    }
+
+    async function obtenerCategoriasHTTP() {
+        const URL = "http://127.0.0.1:8000/categorias"
+        const response = await fetch(URL,{
+            headers : {
+                "x-token" : localStorage.getItem("TOKEN")
+            }
+        })
+
+        if (!response.ok) {
+            console.error("Error de pletición. " + response.status)
+            return
+        }
+
+        const data = await response.json()
+        setCategorias(data.data)
     }
 
     // Solamente se ejecuta la primera vez que se renderiza el componente

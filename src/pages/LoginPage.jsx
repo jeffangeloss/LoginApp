@@ -41,6 +41,7 @@ function LoginPage() {
 
         const data = await resp.json()
         if(data.msg == "Acceso concedido"){
+            localStorage.setItem("TOKEN", data.token) // Cuando el acceso se ha concedido ya se ha guardado en localstorage
             return true
         }else{
             console.error(data.detail)
